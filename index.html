@@ -59,7 +59,7 @@
       </button>
     </header>
 
-    <!-- Card de Diagnóstico de Conexão -->
+    <!-- Card de Diagnóstico de Conexão (Adaptado) -->
     <div id="diagnostic-card" class="hidden bg-rose-50 border border-rose-200 p-5 rounded-2xl space-y-4 shadow-sm animate-fadeIn">
       <div class="flex items-start gap-3">
         <div class="bg-rose-100 p-2 rounded-xl text-rose-600">
@@ -250,7 +250,59 @@
     </div>
   </div>
 
-  <!-- Modal de Confirmação de Exclusão customizado (Sem usar confirm()) -->
+  <!-- Modal de Edição (Novo!) -->
+  <div id="edit-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl border border-slate-100 space-y-4">
+      <div class="flex items-center gap-3 text-emerald-600">
+        <div class="bg-emerald-50 p-2 rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        </div>
+        <h4 class="font-bold text-lg text-slate-900">Editar Registro</h4>
+      </div>
+      
+      <form id="edit-form" onsubmit="handleEditSubmit(event)" class="space-y-3">
+        <input type="hidden" id="edit-id">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Data</label>
+          <input type="date" id="edit-date" required class="w-full border-slate-200 border p-2.5 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Início</label>
+            <input type="time" id="edit-start" required class="w-full border-slate-200 border p-2.5 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Fim</label>
+            <input type="time" id="edit-end" required class="w-full border-slate-200 border p-2.5 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Motivo</label>
+          <textarea id="edit-reason" required rows="2" class="w-full border-slate-200 border p-2.5 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all resize-none"></textarea>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Jira (Opcional)</label>
+          <input type="text" id="edit-jira" class="w-full border-slate-200 border p-2.5 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-colors">
+            Cancelar
+          </button>
+          <button type="submit" id="btn-edit-submit" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-sm">
+            Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
   <div id="delete-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
     <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl border border-slate-100 space-y-4">
       <div class="flex items-center gap-3 text-rose-600">
@@ -291,7 +343,7 @@
   </footer>
 
   <script>
-    // URL da sua planilha do Google Sheets conectada
+    // URL da sua planilha do Google Sheets conectada (Versão 2 implantada com Edit!)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8fV9oOc6DWF6D3N6ANk2hVbJvr84hBLTbzkcp_4FqBLSx7A8Q0MlX2P1GVVDIIipYtA/exec";
     
     // Injeta a URL no botão de diagnóstico para teste manual fácil
@@ -321,7 +373,6 @@
       }
       
       // Caso 2: Data por extenso do Google ex: "Fri Jul 10 2026 00:00:00 GMT-0300 (BRT)"
-      // O Safari do iPhone rejeita parênteses de timezone. Vamos removê-los.
       const cleanStr = dateStr.replace(/\s*\(.*\)$/, "");
       const d = new Date(cleanStr);
       
@@ -352,7 +403,7 @@
         return timeStr;
       }
       
-      // Se for fuso horário ISO retornado como objeto de fuso do Sheets ex: "1899-12-30T21:06:28.000Z"
+      // Se for fuso horário ISO retornado como objeto de fuso do Sheets
       const d = new Date(timeStr);
       if (!isNaN(d.getTime())) {
         const hours = String(d.getHours()).padStart(2, '0');
@@ -399,7 +450,7 @@
       showError(false);
       
       try {
-        // Conexão direta e ultra limpa! Sem usar proxies como AllOrigins que quebram em redes móveis e Safari
+        // Conexão direta livre de CORS para dispositivos móveis
         const response = await fetch(SCRIPT_URL + "?t=" + Date.now(), {
           method: "GET",
           mode: "cors"
@@ -414,7 +465,7 @@
         }
         renderEntries();
       } catch (err) {
-        console.error("Erro na conexão direta com o Sheets:", err);
+        console.error("Erro na conexão direta:", err);
         showError(true);
         showLoadingList(false);
       }
@@ -444,7 +495,6 @@
       };
 
       try {
-        // Envia via POST simples (no-cors) para evitar as travas de segurança CORS de navegadores modernos
         await fetch(SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -454,11 +504,9 @@
           body: JSON.stringify({ action: 'add', data: newEntry })
         });
 
-        // Atualização rápida na tela de forma otimista para o usuário não esperar
         entries.unshift(newEntry);
         entries.sort((a, b) => new Date(parseSheetDate(b.date)) - new Date(parseSheetDate(a.date)));
         
-        // Limpa formulário mantendo apenas data
         document.getElementById('input-start').value = '';
         document.getElementById('input-end').value = '';
         document.getElementById('input-reason').value = '';
@@ -474,7 +522,81 @@
       }
     }
 
-    // Gerenciador de Exclusão Segura de registros
+    // Lógica e Controle do Modal de Edição (Novo!)
+    function openEditModal(id) {
+      const entry = entries.find(e => e.id === id);
+      if (!entry) return;
+
+      document.getElementById('edit-id').value = entry.id;
+      document.getElementById('edit-date').value = parseSheetDate(entry.date);
+      document.getElementById('edit-start').value = parseSheetTime(entry.startTime);
+      document.getElementById('edit-end').value = parseSheetTime(entry.endTime);
+      document.getElementById('edit-reason').value = entry.reason;
+      document.getElementById('edit-jira').value = entry.jira || '';
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    async function handleEditSubmit(event) {
+      event.preventDefault();
+      
+      const id = document.getElementById('edit-id').value;
+      const date = document.getElementById('edit-date').value;
+      const startTime = document.getElementById('edit-start').value;
+      const endTime = document.getElementById('edit-end').value;
+      const reason = document.getElementById('edit-reason').value;
+      const jira = document.getElementById('edit-jira').value;
+
+      const durationMinutes = calculateDuration(startTime, endTime);
+
+      const updatedEntry = {
+        date,
+        startTime,
+        endTime,
+        reason,
+        jira,
+        durationMinutes
+      };
+
+      // Desabilita botão de salvar no modal
+      const btn = document.getElementById('btn-edit-submit');
+      btn.disabled = true;
+      btn.innerText = "Salvando...";
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          body: JSON.stringify({ action: 'edit', id: id, data: updatedEntry })
+        });
+
+        // Atualiza a memória local otimisticamente
+        const idx = entries.findIndex(e => e.id === id);
+        if (idx !== -1) {
+          entries[idx] = { id, ...updatedEntry };
+        }
+        
+        entries.sort((a, b) => new Date(parseSheetDate(b.date)) - new Date(parseSheetDate(a.date)));
+        renderEntries();
+        closeEditModal();
+        showToast("Registro editado com sucesso!");
+      } catch (err) {
+        console.error(err);
+        showToast("Falha ao salvar edição na planilha.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Alterações";
+      }
+    }
+
+    // Gerenciador de Exclusão Segura
     function openDeleteModal(id) {
       deleteIdTarget = id;
       const modal = document.getElementById('delete-modal');
@@ -494,7 +616,6 @@
 
     async function executeDelete(id) {
       const previousEntries = [...entries];
-      // Remoção otimista da tela para experiência ágil
       entries = entries.filter(e => e.id !== id);
       renderEntries();
 
@@ -512,7 +633,7 @@
         console.error(err);
         entries = previousEntries;
         renderEntries();
-        showToast("Falha ao tentar remover fisicamente o registro.", "error");
+        showToast("Falha ao tentar remover o registro.", "error");
       }
     }
 
@@ -542,17 +663,14 @@
       const listContainer = document.getElementById('list-container');
       const selectedMonth = document.getElementById('filter-month').value;
       
-      // Filtra e ordena de forma segura convertendo as datas para o formato unificado YYYY-MM-DD
       const filtered = entries.filter(entry => {
         const entryDate = parseSheetDate(entry.date);
         return entryDate.startsWith(selectedMonth);
       });
       
-      // Atualiza o acumulado de horas do mês
       const totalMinutes = filtered.reduce((acc, curr) => acc + Number(curr.durationMinutes), 0);
       document.getElementById('total-duration').innerText = formatDuration(totalMinutes);
 
-      // Desabilita botões se a lista estiver vazia
       document.getElementById('btn-export').disabled = filtered.length === 0;
       document.getElementById('btn-copy').disabled = filtered.length === 0;
 
@@ -602,15 +720,27 @@
               <p class="text-sm font-semibold text-slate-700 leading-relaxed">${entry.reason}</p>
               ${jiraSection}
             </div>
-            <button 
-              onclick="openDeleteModal('${entry.id}')" 
-              class="text-slate-300 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-50 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100"
-              title="Remover Registro"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
+            <div class="flex items-center gap-1">
+              <!-- Botão de Editar (Novo!) -->
+              <button 
+                onclick="openEditModal('${entry.id}')" 
+                class="text-slate-300 hover:text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100"
+                title="Editar Registro"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button 
+                onclick="openDeleteModal('${entry.id}')" 
+                class="text-slate-300 hover:text-rose-500 p-1.5 rounded-lg hover:bg-rose-50 transition-colors opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100"
+                title="Remover Registro"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         `;
       });
