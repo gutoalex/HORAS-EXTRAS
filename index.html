@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Horas Extras</title>
-  <!-- Tailwind CSS para um design lindo, moderno e responsivo -->
+  <!-- Tailwind CSS para design responsivo de alto nível -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Fonte Segoe UI/Inter para elegância corporativa -->
+  <!-- Plus Jakarta Sans: Fonte super moderna e limpa -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
-    /* Custom scrollbar para ficar bem sutil */
+    /* Estilização suave da barra de rolagem */
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -28,15 +28,14 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen antialiased">
+<body class="bg-slate-50 text-slate-800 min-h-screen antialiased flex flex-col justify-between">
 
-  <div class="max-w-5xl mx-auto p-4 md:p-8 space-y-6">
+  <div class="max-w-5xl mx-auto p-4 md:p-8 space-y-6 w-full flex-grow">
     
     <!-- Cabeçalho Principal -->
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-600 p-2.5 rounded-xl text-white shadow-sm shadow-emerald-200">
-          <!-- Ícone SVG de Planilha -->
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
@@ -60,12 +59,56 @@
       </button>
     </header>
 
-    <!-- Alerta de Feedback/Erro -->
-    <div id="error-alert" class="hidden bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl flex items-start gap-3 shadow-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" class="text-rose-500 flex-shrink-0 w-5 h-5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
-      <div id="error-message" class="text-rose-800 text-sm font-medium flex-1"></div>
+    <!-- Card de Ajuda/Diagnóstico Dinâmico -->
+    <div id="diagnostic-card" class="hidden bg-rose-50 border border-rose-200 p-5 rounded-2xl space-y-4 shadow-sm animate-fadeIn">
+      <div class="flex items-start gap-3">
+        <div class="bg-rose-100 p-2 rounded-xl text-rose-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <div class="space-y-1">
+          <h3 class="font-bold text-rose-900 text-lg">Houve um problema de conexão</h3>
+          <p class="text-sm text-rose-700 font-medium">O navegador não conseguiu carregar os dados da sua Planilha do Google. Vamos descobrir o motivo?</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-rose-100 space-y-3">
+        <p class="text-sm font-bold text-slate-700">📋 Siga estes passos simples para testar:</p>
+        <ol class="list-decimal list-inside text-sm text-slate-600 space-y-2">
+          <li>
+            Clique no botão azul abaixo para abrir a sua API direta.
+          </li>
+          <li>
+            <strong>O que aconteceu ao abrir o link?</strong>
+            <ul class="list-disc list-inside ml-5 mt-1 space-y-1 text-xs text-slate-500">
+              <li>Se carregar uma página com colchetes <code class="bg-slate-100 px-1 py-0.5 rounded text-rose-600 font-mono">[]</code>, o seu script está perfeito!</li>
+              <li>Se pedir para fazer <strong>Login com Conta Google</strong>, significa que você esqueceu de marcar <strong>"Qualquer pessoa"</strong> no acesso.</li>
+              <li>Se aparecer alguma tela de erro do Google, você precisa autorizar o script a mexer na planilha.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <div class="flex flex-wrap gap-2 pt-2">
+        <a 
+          id="test-api-link"
+          href="#" 
+          target="_blank"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2 shadow-sm"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2v-5M16.5 7.5L12 12m0 0l-1.5-1.5M12 12l1.5 1.5M12 12V6" />
+          </svg>
+          Testar Link da API no Google
+        </a>
+        <button 
+          onclick="window.open('https://github.com/settings/profile', '_blank')"
+          class="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-sm transition-all"
+        >
+          Como ajustar permissões?
+        </button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,6 +188,7 @@
         </form>
       </div>
       
+      <!-- Coluna Direita: Painel Principal, Histórico e Filtros -->
       <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col min-h-[450px]">
         
         <!-- Painel de Filtros e Resumos -->
@@ -211,10 +255,18 @@
     </div>
   </div>
 
+  <!-- Rodapé discreto -->
+  <footer class="text-center py-6 text-xs text-slate-400 border-t border-slate-200 mt-8">
+    Feito para facilitação de relatórios internos de horas extras • 2026
+  </footer>
+
   <script>
     // URL da sua planilha do Google Sheets conectada
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8fV9oOc6DWF6D3N6ANk2hVbJvr84hBLTbzkcp_4FqBLSx7A8Q0MlX2P1GVVDIIipYtA/exec";
     
+    // Injeta a URL no botão de diagnóstico para teste manual fácil
+    document.getElementById('test-api-link').href = SCRIPT_URL;
+
     // Lista global em memória
     let entries = [];
     
@@ -229,15 +281,24 @@
 
     async function fetchEntries() {
       showLoadingList(true);
-      showError('');
+      showError(false);
       
       try {
-        // AllOrigins encapsula a resposta eliminando CORS do Google Sheets no Github Pages
+        // AllOrigins encapsula a resposta eliminando CORS do Google Sheets
         const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(SCRIPT_URL + "?t=" + Date.now())}`);
         if (!response.ok) throw new Error("Erro de conexão com o servidor de sincronização.");
         
         const data = await response.json();
-        const entriesData = JSON.parse(data.contents);
+        
+        // Verifica se o retorno de fato é um JSON válido. 
+        // Se a planilha estiver bloqueada ou com erro, o AllOrigins trará a página HTML de Login do Google em formato texto.
+        let entriesData;
+        try {
+          entriesData = JSON.parse(data.contents);
+        } catch (jsonParseErr) {
+          console.error("Conteúdo retornado não é um JSON válido. AllOrigins retornou:", data.contents);
+          throw new Error("Formato inválido. O script do Google pode estar exigindo autenticação.");
+        }
         
         if (Array.isArray(entriesData)) {
           entries = entriesData.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -245,7 +306,7 @@
         renderEntries();
       } catch (err) {
         console.error(err);
-        showError("Não foi possível ler dados da sua Planilha Google. Certifique-se de que publicou o script do Apps Script como 'Qualquer pessoa'.");
+        showError(true);
         showLoadingList(false);
       }
     }
@@ -253,7 +314,7 @@
     async function handleSubmit(event) {
       event.preventDefault();
       showSubmitLoading(true);
-      showError('');
+      showError(false);
 
       const date = document.getElementById('input-date').value;
       const startTime = document.getElementById('input-start').value;
@@ -274,14 +335,14 @@
       };
 
       try {
-        // Envia cego (no-cors) para evitar travas preflight de CORS de navegadores modernos
+        // Envia via POST simples (no-cors) para evitar as travas CORS de navegadores modernos
         await fetch(SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
           body: JSON.stringify({ action: 'add', data: newEntry })
         });
 
-        // Atualização rápida na tela de forma otimista
+        // Atualização rápida na tela de forma otimista para o usuário não esperar
         entries.unshift(newEntry);
         entries.sort((a, b) => new Date(b.date) - new Date(a.date));
         
@@ -294,7 +355,7 @@
         renderEntries();
       } catch (err) {
         console.error(err);
-        showError("Erro de comunicação ao salvar o registro no Google Sheets.");
+        alert("Erro de comunicação ao salvar o registro no Google Sheets. Tente sincronizar.");
       } finally {
         showSubmitLoading(false);
       }
@@ -304,7 +365,7 @@
       if (!confirm("Tem certeza que deseja apagar permanentemente esse registro da planilha?")) return;
       
       const previousEntries = [...entries];
-      // Remoção otimista da tela
+      // Remoção otimista da tela para experiência ágil
       entries = entries.filter(e => e.id !== id);
       renderEntries();
 
@@ -318,7 +379,7 @@
         console.error(err);
         entries = previousEntries;
         renderEntries();
-        showError("Falha ao tentar remover o registro fisicamente da Planilha.");
+        alert("Falha ao tentar remover o registro fisicamente da Planilha.");
       }
     }
 
@@ -571,14 +632,12 @@
       }
     }
 
-    function showError(msg) {
-      const alert = document.getElementById('error-alert');
-      const text = document.getElementById('error-message');
-      if (msg) {
-        text.innerText = msg;
-        alert.classList.remove('hidden');
+    function showError(show) {
+      const diagnosticCard = document.getElementById('diagnostic-card');
+      if (show) {
+        diagnosticCard.classList.remove('hidden');
       } else {
-        alert.classList.add('hidden');
+        diagnosticCard.classList.add('hidden');
       }
     }
   </script>
